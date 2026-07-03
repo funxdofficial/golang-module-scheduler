@@ -58,18 +58,59 @@ func logTimestamp() string {
 // timeNow dapat dioverride di test.
 var timeNow = func() time.Time { return time.Now() }
 
+// bannerFXD — ASCII art F, X (split biru/putih per baris), D; lebar seragam 8 kolom.
+var bannerF = []string{
+	"███████╗",
+	"██╔════╝",
+	"█████╗  ",
+	"██╔════╝",
+	"██║     ",
+	"╚═╝     ",
+}
+
+// bannerXLeft + bannerXRight = 8 kolom; split mengikuti sumbu vertikal huruf X.
+var bannerXLeft = []string{
+	"██╗ ",
+	"╚██╗",
+	" ╚██",
+	" ██╔",
+	"██╔╝",
+	"╚═╝ ",
+}
+
+var bannerXRight = []string{
+	" ██╗",
+	"██╔╝",
+	"█╔╝ ",
+	"██╗ ",
+	" ██╗",
+	" ╚═╝",
+}
+
+var bannerD = []string{
+	"██████╗ ",
+	"██   ██╗",
+	"██    ██",
+	"██    ██",
+	"██   ██╔",
+	"██████╔╝",
+}
+
+func bannerXColored(i int) string {
+	return color(ansiFunBlue, bannerXLeft[i]) + color(ansiWhite, bannerXRight[i])
+}
+
 func printBanner() {
 	logMu.Lock()
 	defer logMu.Unlock()
 
-	b := color(ansiFunBlue, "███████╗") + color(ansiWhite, "██╗  ██╗") + color(ansiFunBlue, "██████╗ ")
-	b += "\n" + color(ansiFunBlue, "██╔════╝") + color(ansiWhite, "╚██╗██╔╝") + color(ansiFunBlue, "██╔══██╗")
-	b += "\n" + color(ansiFunBlue, "██║     ") + color(ansiWhite, " ╚███╔╝ ") + color(ansiFunBlue, "██║  ██║")
-	b += "\n" + color(ansiFunBlue, "██║     ") + color(ansiWhite, " ██╔██╗ ") + color(ansiFunBlue, "██║  ██║")
-	b += "\n" + color(ansiFunBlue, "╚██████╗") + color(ansiWhite, "██╔╝ ██╗") + color(ansiFunBlue, "██████╔╝")
-	b += "\n" + color(ansiFunBlue, " ╚═════╝") + color(ansiWhite, "╚═╝  ╚═╝") + color(ansiFunBlue, "╚═════╝ ")
-
-	fmt.Fprintln(logOut, b)
+	const gap = "  "
+	for i := range bannerF {
+		line := color(ansiFunBlue, bannerF[i]) + gap +
+			bannerXColored(i) + gap +
+			color(ansiFunBlue, bannerD[i])
+		fmt.Fprintln(logOut, line)
+	}
 	fmt.Fprintln(logOut, color(ansiCyan, "  FUNXD Schedular"))
 	fmt.Fprintln(logOut)
 }

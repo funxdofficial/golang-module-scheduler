@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"unicode/utf8"
 )
 
 func TestMain(m *testing.M) {
@@ -95,5 +96,25 @@ func TestPrintBanner(t *testing.T) {
 	out := buf.String()
 	if strings.Count(out, "FUNXD Schedular") != 2 {
 		t.Fatalf("banner harus selalu tampil setiap pemanggilan, dapat %d kali", strings.Count(out, "FUNXD Schedular"))
+	}
+	if !strings.Contains(out, "█████╗") {
+		t.Fatalf("banner harus mengandung huruf F (garis tengah), dapat: %q", out)
+	}
+	if strings.Contains(out, "╚██████╗") {
+		t.Fatalf("banner tidak boleh punya garis bawah penuh huruf pertama (C/E), dapat: %q", out)
+	}
+	if !strings.Contains(out, "██   ██╗") || !strings.Contains(out, "██████╔╝") {
+		t.Fatalf("banner harus mengandung huruf D yang baru, dapat: %q", out)
+	}
+	for i := range bannerF {
+		if utf8.RuneCountInString(bannerF[i]) != 8 {
+			t.Errorf("F baris %d lebar %d, mau 8", i, utf8.RuneCountInString(bannerF[i]))
+		}
+		if utf8.RuneCountInString(bannerXLeft[i])+utf8.RuneCountInString(bannerXRight[i]) != 8 {
+			t.Errorf("X baris %d lebar %d, mau 8", i, utf8.RuneCountInString(bannerXLeft[i])+utf8.RuneCountInString(bannerXRight[i]))
+		}
+		if utf8.RuneCountInString(bannerD[i]) != 8 {
+			t.Errorf("D baris %d lebar %d, mau 8", i, utf8.RuneCountInString(bannerD[i]))
+		}
 	}
 }
